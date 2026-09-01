@@ -186,8 +186,6 @@ Postman → HTTP Request → DispatcherServlet → ProductoController
 
 En el recorrido exitoso se encuentra un objeto Java que Jackson transforma en JSON. En el recorrido de error no existe un objeto que transformar y el controlador retorna `404 Not Found`.
 
-> **Pendiente para el integrante 3:** agregar el archivo o enlace del diagrama de draw.io con ambos recorridos.
-
 ## 11. Aportes del equipo
 
 ### Integrante 1 - Diseño técnico y modelado
