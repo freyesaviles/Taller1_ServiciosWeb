@@ -211,16 +211,91 @@ En el recorrido exitoso se encuentra un objeto Java que Jackson transforma en JS
 
 ### Integrante 3 - Pruebas, documentación y arquitectura
 
-**Nombre y rama:** pendiente de completar.
+**Jorddy Siezar:** 
 
 - Ejecución y documentación de pruebas en Postman.
 - Registro de resultados y conclusiones técnicas.
+- ### Prueba 1: consultar la colección
+GET http://localhost:8080/api/productos
+
+
+Resultado obtenido:
+
+- Estado: 200 OK
+- Cuerpo: arreglo JSON con 8 productos.
+
+### Prueba 2: consultar un ID existente
+
+http
+GET http://localhost:8080/api/productos/3
+
+
+Resultado esperado:
+
+json
+{
+"id": 3,
+"nombre": "Café Tradicional",
+"presentacion": "200 g",
+"categoria": "Café soluble",
+"disponible": true
+}
+
+
+Estado obtenido: 200 OK.
+
+### Prueba 3: consultar el primer ID
+
+http
+GET http://localhost:8080/api/productos/1
+
+
+devuelve únicamente el producto con ID 1 y estado 200 OK.
+
+### Prueba 4: consultar un producto inexistente
+
+http
+GET http://localhost:8080/api/productos/999
+
+
+Resultado obtenido:
+
+- Estado: 404 Not Found
+- Sin producto en el cuerpo.
+
+### Prueba 5: registrar un producto
+
+- Método: POST
+- URL: http://localhost:8080/api/productos
+- Pestaña Body
+- Seleccionar raw
+- Seleccionar formato JSON
+
+Cuerpo:
+
+json
+{
+"id": 9,
+"nombre": "Café Clásico",
+"presentacion": "100 g",
+"categoria": "Café soluble",
+"disponible": true
+}
+
+
+Resultado obtenido:
+
+- Estado: 201 Created
+- El cuerpo contiene el producto registrado.
+
+### Prueba 6: consultar nuevamente la colección
+
+http
+GET http://localhost:8080/api/productos
+
+
+Ahora aparecen 9 productos, incluido el ID 9.
+
+
 - Elaboración del diagrama en draw.io.
 - Documentación de los recorridos exitoso y de recurso inexistente.
-
-## 12. Consideraciones
-
-- La aplicación no utiliza base de datos.
-- Los datos existen solamente mientras la aplicación está en ejecución.
-- Al reiniciar el servidor se recuperan los ocho productos iniciales.
-- El proyecto fue creado exclusivamente con fines académicos.
