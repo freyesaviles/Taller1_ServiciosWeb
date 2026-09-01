@@ -1,6 +1,7 @@
 package com.uam.taller1_serviciosweb.controllers;
 
 import com.uam.taller1_serviciosweb.models.Producto;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +23,10 @@ public class ProductoController {
         productos.add(new Producto(6, "Café con Canela", "50 g", "Café saborizado", true));
         productos.add(new Producto(7, "Café con Vainilla", "100 g", "Café saborizado", true));
         productos.add(new Producto(8, "Café Premium", "200 g", "Café soluble", false));
+    }
+
+    @GetMapping
+    public List<Producto> consultarProductos() {
+        return productos;
     }
 }
