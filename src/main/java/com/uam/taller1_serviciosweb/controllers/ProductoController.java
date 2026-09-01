@@ -1,7 +1,9 @@
 package com.uam.taller1_serviciosweb.controllers;
 
 import com.uam.taller1_serviciosweb.models.Producto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +30,14 @@ public class ProductoController {
     @GetMapping
     public List<Producto> consultarProductos() {
         return productos;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> consultarProductoPorId(@PathVariable int id) {
+        return productos.stream()
+                .filter(producto -> producto.getId() == id)
+                .findFirst()
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
