@@ -1,4 +1,4 @@
-package com.uam.taller1_serviciosweb.model;
+package com.uam.taller1_serviciosweb.models;
 
 public class Producto {
 

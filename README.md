@@ -72,3 +72,25 @@ Ejemplo de un producto:
   "categoria": "Café soluble",
   "disponible": true
 }
+
+
+# 18. Aporte técnico del Integrante 1
+
+## Rama: Max
+
+El Integrante 1 estuvo encargado principalmente del diseño técnico y modelado inicial de la API REST.
+
+### Trabajo realizado
+
+- Definición del recurso `Producto`.
+- Definición de los atributos `id`, `nombre`, `presentacion`, `categoria` y `disponible`.
+- Diseño de las rutas de la API REST.
+- Definición de los métodos HTTP correspondientes a cada operación.
+- Definición de los códigos de estado HTTP `200 OK`, `201 Created` y `404 Not Found`.
+- Justificación técnica de las decisiones tomadas para el diseño de la API.
+- Creación de la clase `Producto`.
+- Implementación de los constructores de `Producto`.
+- Implementación de getters y setters.
+- Documentación de la representación de los productos mediante JSON.
+
+La implementación del controlador y los endpoints será realizada posteriormente por el integrante responsable de la implementación REST.
