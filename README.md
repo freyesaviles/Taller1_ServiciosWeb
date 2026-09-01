@@ -155,16 +155,115 @@ Respuesta esperada: `201 Created` y el producto registrado.
 
 ## 9. Matriz de pruebas con Postman
 
-| # | Objetivo | Método | URL | Entrada | Código esperado | Resultado a verificar |
-|---|---|---|---|---|---|---|
-| 1 | Consultar la colección | `GET` | `/api/productos` | No aplica | `200 OK` | Retorna los ocho productos iniciales. |
-| 2 | Consultar un ID existente | `GET` | `/api/productos/3` | No aplica | `200 OK` | Retorna exactamente el producto con ID `3`. |
-| 3 | Consultar el primer ID | `GET` | `/api/productos/1` | No aplica | `200 OK` | Retorna el producto con ID `1`. |
-| 4 | Consultar un ID inexistente | `GET` | `/api/productos/999` | No aplica | `404 Not Found` | Comunica que el recurso no existe. |
-| 5 | Registrar un producto válido | `POST` | `/api/productos` | Producto en JSON | `201 Created` | Recibe y retorna el producto creado. |
-| 6 | Comprobar el registro | `GET` | `/api/productos` | No aplica | `200 OK` | El producto nuevo aparece en la colección. |
+| # | Escenario | Método | URL | Código obtenido | Resultado |
+|---|---|---|---|---|---|
+| 1 | Consultar la colección | `GET` | `/api/productos` | `200 OK` | Retornó los ocho productos iniciales. |
+| 2 | Consultar un ID existente | `GET` | `/api/productos/3` | `200 OK` | Retornó exactamente el producto con ID `3`. |
+| 3 | Consultar el primer ID | `GET` | `/api/productos/1` | `200 OK` | Retornó el producto con ID `1`. |
+| 4 | Consultar un ID inexistente | `GET` | `/api/productos/999` | `404 Not Found` | Retornó una respuesta sin producto. |
+| 5 | Registrar un producto válido | `POST` | `/api/productos` | `201 Created` | Registró y retornó el producto enviado. |
+| 6 | Consultar después del registro | `GET` | `/api/productos` | `200 OK` | Retornó nueve productos, incluido el nuevo. |
 
-> **Pendiente para el integrante 3:** agregar por cada prueba el código y respuesta realmente recibidos, la captura de Postman y una conclusión técnica.
+### 9.1 Consulta de la colección completa
+
+**Objetivo:** comprobar que la API retorna todos los productos almacenados en memoria.
+
+```http
+GET http://localhost:8080/api/productos
+```
+
+- **JSON de entrada:** no aplica.
+- **Código obtenido:** `200 OK`.
+- **Respuesta recibida:** arreglo JSON con los ocho productos iniciales.
+- **Conclusión técnica:** la URI de colección funciona correctamente y Spring transforma la lista de objetos Java en un arreglo JSON. El resultado coincide con la especificación.
+
+### 9.2 Consulta de un ID existente
+
+**Objetivo:** comprobar que la API retorna exactamente el recurso identificado con el ID `3`.
+
+```http
+GET http://localhost:8080/api/productos/3
+```
+
+- **JSON de entrada:** no aplica.
+- **Código obtenido:** `200 OK`.
+- **Respuesta recibida:**
+
+```json
+{
+  "id": 3,
+  "nombre": "Café Tradicional",
+  "presentacion": "200 g",
+  "categoria": "Café soluble",
+  "disponible": true
+}
+```
+
+- **Conclusión técnica:** `@PathVariable` permite obtener el ID desde la URI y buscar el producto correspondiente. La respuesta contiene un único recurso y coincide con la especificación.
+
+### 9.3 Consulta del primer ID existente
+
+**Objetivo:** verificar que la variable de ruta también funciona con el primer identificador almacenado.
+
+```http
+GET http://localhost:8080/api/productos/1
+```
+
+- **JSON de entrada:** no aplica.
+- **Código obtenido:** `200 OK`.
+- **Respuesta recibida:** un único producto cuyo atributo `id` es `1`.
+- **Conclusión técnica:** el controlador selecciona el recurso solicitado sin depender de su posición en la colección. El resultado coincide con la especificación.
+
+### 9.4 Consulta de un producto inexistente
+
+**Objetivo:** comprobar el comportamiento de la API cuando no existe el identificador solicitado.
+
+```http
+GET http://localhost:8080/api/productos/999
+```
+
+- **JSON de entrada:** no aplica.
+- **Código obtenido:** `404 Not Found`.
+- **Respuesta recibida:** cuerpo sin un producto.
+- **Conclusión técnica:** la API diferencia una consulta exitosa de un recurso inexistente mediante el código HTTP `404`, de acuerdo con la especificación inicial.
+
+### 9.5 Registro de un producto válido
+
+**Objetivo:** comprobar que la API recibe un producto en JSON, lo almacena en memoria y comunica su creación.
+
+```http
+POST http://localhost:8080/api/productos
+Content-Type: application/json
+```
+
+**JSON de entrada:**
+
+```json
+{
+  "id": 9,
+  "nombre": "Café Clásico",
+  "presentacion": "100 g",
+  "categoria": "Café soluble",
+  "disponible": true
+}
+```
+
+- **Código obtenido:** `201 Created`.
+- **Respuesta recibida:** el producto registrado en formato JSON.
+- **Conclusión técnica:** `@RequestBody` y Jackson convierten el JSON en un objeto `Producto`. El código `201` comunica que el recurso fue creado correctamente.
+
+### 9.6 Consulta posterior al registro
+
+**Objetivo:** comprobar que el producto registrado permanece en la colección durante la ejecución de la aplicación.
+
+```http
+GET http://localhost:8080/api/productos
+```
+
+- **JSON de entrada:** no aplica.
+- **Código obtenido:** `200 OK`.
+- **Respuesta recibida:** arreglo JSON con nueve productos, incluido el producto con ID `9`.
+- **Conclusión técnica:** el nuevo producto fue incorporado a la lista en memoria y puede consultarse posteriormente. Si el servidor se reinicia, el registro desaparece porque no existe persistencia en una base de datos.
 
 ## 10. Arquitectura
 
@@ -185,6 +284,8 @@ Postman → HTTP Request → DispatcherServlet → ProductoController
 ```
 
 En el recorrido exitoso se encuentra un objeto Java que Jackson transforma en JSON. En el recorrido de error no existe un objeto que transformar y el controlador retorna `404 Not Found`.
+
+El diagrama editable de ambos recorridos se encuentra en [diagrama-arquitectura.drawio](diagrama-arquitectura.drawio).
 
 ## 11. Aportes del equipo
 
@@ -209,91 +310,19 @@ En el recorrido exitoso se encuentra un objeto Java que Jackson transforma en JS
 
 ### Integrante 3 - Pruebas, documentación y arquitectura
 
-**Jorddy Siezar:** 
+**Nombre:** Jorddy Siezar
 
-- Ejecución y documentación de pruebas en Postman.
-- Registro de resultados y conclusiones técnicas.
-- ### Prueba 1: consultar la colección
-GET http://localhost:8080/api/productos
+**Rama:** `Jorddy`
 
+- Ejecución de los seis escenarios de prueba en Postman.
+- Documentación de objetivos, métodos, URL, entradas, respuestas y códigos HTTP.
+- Elaboración de conclusiones técnicas para los resultados obtenidos.
+- Elaboración del diagrama de arquitectura en draw.io.
+- Representación de los recorridos exitoso y de recurso inexistente.
 
-Resultado obtenido:
+## 12. Consideraciones
 
-- Estado: 200 OK
-- Cuerpo: arreglo JSON con 8 productos.
-
-### Prueba 2: consultar un ID existente
-
-http
-GET http://localhost:8080/api/productos/3
-
-
-Resultado esperado:
-
-json
-{
-"id": 3,
-"nombre": "Café Tradicional",
-"presentacion": "200 g",
-"categoria": "Café soluble",
-"disponible": true
-}
-
-
-Estado obtenido: 200 OK.
-
-### Prueba 3: consultar el primer ID
-
-http
-GET http://localhost:8080/api/productos/1
-
-
-devuelve únicamente el producto con ID 1 y estado 200 OK.
-
-### Prueba 4: consultar un producto inexistente
-
-http
-GET http://localhost:8080/api/productos/999
-
-
-Resultado obtenido:
-
-- Estado: 404 Not Found
-- Sin producto en el cuerpo.
-
-### Prueba 5: registrar un producto
-
-- Método: POST
-- URL: http://localhost:8080/api/productos
-- Pestaña Body
-- Seleccionar raw
-- Seleccionar formato JSON
-
-Cuerpo:
-
-json
-{
-"id": 9,
-"nombre": "Café Clásico",
-"presentacion": "100 g",
-"categoria": "Café soluble",
-"disponible": true
-}
-
-
-Resultado obtenido:
-
-- Estado: 201 Created
-- El cuerpo contiene el producto registrado.
-
-### Prueba 6: consultar nuevamente la colección
-
-http
-GET http://localhost:8080/api/productos
-
-
-Ahora aparecen 9 productos, incluido el ID 9.
-
-
-- Elaboración del diagrama en draw.io.
-- Documentación de los recorridos exitoso y de recurso inexistente.
+- La aplicación no utiliza una base de datos.
+- Los datos existen solamente mientras la aplicación está en ejecución.
+- Al reiniciar el servidor se recuperan únicamente los ocho productos iniciales.
+- El proyecto fue creado exclusivamente con fines académicos.
